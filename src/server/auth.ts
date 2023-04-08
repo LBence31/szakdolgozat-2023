@@ -23,8 +23,6 @@ declare module "next-auth" {
     error?: "RefreshAccessTokenError";
     user: {
       id: string;
-      // ...other properties
-      // role: UserRole;
     } & DefaultSession["user"];
   }
 }
