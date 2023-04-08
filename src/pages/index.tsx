@@ -1,16 +1,20 @@
 import { type NextPage } from "next";
-import { useSession } from "next-auth/react";
+import { signIn, useSession } from "next-auth/react";
 import Head from "next/head";
 
 import { api } from "~/utils/api";
 
 import { signOut } from "next-auth/react";
+import { useEffect } from "react";
 
 const Home: NextPage = () => {
-  //const result = api.greeting.greeting.useQuery({ name: "client" });
-
   const { data: session } = useSession();
-  console.log(session);
+
+  useEffect(() => {
+    if (session?.error === "RefreshAccessTokenError") {
+      void signIn(); // Force sign in to hopefully resolve error
+    }
+  }, [session]);
 
   return (
     <>
@@ -21,7 +25,11 @@ const Home: NextPage = () => {
       <main>
         <div className="flex h-screen w-full flex-col items-center justify-center">
           <h2 className="mt-5">
-            <button onClick={() => void signOut()}>Log Out</button>
+            {session ? (
+              <button onClick={() => void signOut()}>Log Out</button>
+            ) : (
+              <button onClick={() => void signIn()}>Log In</button>
+            )}
           </h2>
         </div>
       </main>

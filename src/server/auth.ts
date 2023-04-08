@@ -9,7 +9,8 @@ import { PrismaAdapter } from "@next-auth/prisma-adapter";
 import { env } from "~/env.mjs";
 import { prisma } from "~/server/db";
 
-import { LOGIN_URL } from "~/lib/spotify";
+import SpotifyApi, { LOGIN_URL } from "~/lib/spotify";
+import spotifyApi from "~/lib/spotify";
 
 /**
  * Module augmentation for `next-auth` types. Allows us to add custom properties to the `session`
@@ -19,6 +20,7 @@ import { LOGIN_URL } from "~/lib/spotify";
  */
 declare module "next-auth" {
   interface Session extends DefaultSession {
+    error?: "RefreshAccessTokenError";
     user: {
       id: string;
       // ...other properties
@@ -34,10 +36,52 @@ declare module "next-auth" {
  */
 export const authOptions: NextAuthOptions = {
   callbacks: {
-    session({ session, user }) {
+    async session({ session, user }) {
       if (session.user) {
         session.user.id = user.id;
       }
+      const spotify = await prisma.account.findFirst({
+        where: {
+          userId: user.id,
+        },
+      });
+      if (
+        spotify != null &&
+        spotify != undefined &&
+        spotify.expires_at != null &&
+        spotify.access_token != null &&
+        spotify.refresh_token != null
+      ) {
+        if (spotify.expires_at * 1000 < Date.now()) {
+          //refresh
+          try {
+            SpotifyApi.setAccessToken(spotify.access_token);
+            spotifyApi.setRefreshToken(spotify.refresh_token);
+            const { body: refreshedToken } =
+              await SpotifyApi.refreshAccessToken();
+            await prisma.account.update({
+              data: {
+                access_token: refreshedToken.access_token,
+                expires_at: Math.floor(
+                  Date.now() / 1000 + refreshedToken.expires_in
+                ),
+                refresh_token:
+                  refreshedToken.refresh_token ?? spotify.refresh_token,
+              },
+              where: {
+                provider_providerAccountId: {
+                  provider: "spotify",
+                  providerAccountId: spotify.providerAccountId,
+                },
+              },
+            });
+          } catch (error) {
+            console.error("Error refreshing access token", error);
+            session.error = "RefreshAccessTokenError";
+          }
+        }
+      }
+
       return session;
     },
   },
