@@ -7,7 +7,15 @@ import { api } from "~/utils/api";
 import { signOut } from "next-auth/react";
 import { useEffect } from "react";
 
-const Home: NextPage = () => {
+import { getServerSession } from "next-auth/next";
+import { authOptions } from "~/server/auth";
+import type { GetServerSidePropsContext } from "next";
+
+interface Props {
+  state: string;
+}
+
+const Home = ({ state }: Props) => {
   const { data: session } = useSession();
 
   useEffect(() => {
@@ -38,3 +46,15 @@ const Home: NextPage = () => {
 };
 
 export default Home;
+
+export async function getServerSideProps(context: GetServerSidePropsContext) {
+  const session = await getServerSession(context.req, context.res, authOptions);
+
+  if (!session) {
+    return { redirect: { destination: "/signin" } };
+  }
+
+  return {
+    props: { state: "ok" },
+  };
+}
