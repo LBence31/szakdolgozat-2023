@@ -8,7 +8,7 @@ import { signOut, useSession } from "next-auth/react";
 import { useEffect, useState } from "react";
 import { shuffle } from "lodash";
 import { useRecoilState, useRecoilValue } from "recoil";
-import { playlistIdState, playlistState } from "../atoms/playlistAtom";
+import { playlistIdState, playlistState } from "~/atoms/playlistAtom";
 import useSpotifyAuthCheck from "~/hooks/useSpotifyAuthCheck";
 import Songs from "./Songs";
 import { api } from "~/utils/api";
