@@ -19,8 +19,6 @@ const server = z.object({
     process.env.VERCEL ? z.string().min(1) : z.string().url()
   ),
   // Add `.min(1) on ID and SECRET if you want to make sure they're not empty
-  SPOTIFY_ID: z.string().min(1),
-  SPOTIFY_SECRET: z.string().min(1),
   SECRET: z.string().min(1),
 });
 
@@ -30,6 +28,8 @@ const server = z.object({
  */
 const client = z.object({
   // NEXT_PUBLIC_CLIENTVAR: z.string().min(1),
+  NEXT_PUBLIC_SPOTIFY_ID: z.string().min(1),
+  NEXT_PUBLIC_SPOTIFY_SECRET: z.string().min(1),
 });
 
 /**
@@ -43,10 +43,9 @@ const processEnv = {
   NODE_ENV: process.env.NODE_ENV,
   NEXTAUTH_SECRET: process.env.NEXTAUTH_SECRET,
   NEXTAUTH_URL: process.env.NEXTAUTH_URL,
-  SPOTIFY_ID: process.env.SPOTIFY_CLIENT_ID,
-  SPOTIFY_SECRET: process.env.SPOTIFY_CLIENT_SECRET,
+  NEXT_PUBLIC_SPOTIFY_ID: process.env.NEXT_PUBLIC_SPOTIFY_ID,
+  NEXT_PUBLIC_SPOTIFY_SECRET: process.env.NEXT_PUBLIC_SPOTIFY_SECRET,
   SECRET: process.env.SECRET,
-  // NEXT_PUBLIC_CLIENTVAR: process.env.NEXT_PUBLIC_CLIENTVAR,
 };
 
 // Don't touch the part below

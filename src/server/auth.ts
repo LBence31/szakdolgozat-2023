@@ -23,6 +23,7 @@ declare module "next-auth" {
     error?: "RefreshAccessTokenError";
     user: {
       id: string;
+      accessToken: string | null | undefined;
     } & DefaultSession["user"];
   }
 }
@@ -35,14 +36,17 @@ declare module "next-auth" {
 export const authOptions: NextAuthOptions = {
   callbacks: {
     async session({ session, user }) {
-      if (session.user) {
-        session.user.id = user.id;
-      }
       const spotify = await prisma.account.findFirst({
         where: {
           userId: user.id,
         },
       });
+
+      if (session.user) {
+        session.user.id = user.id;
+        session.user.accessToken = spotify?.access_token;
+      }
+
       if (
         spotify != null &&
         spotify != undefined &&
@@ -86,8 +90,8 @@ export const authOptions: NextAuthOptions = {
   adapter: PrismaAdapter(prisma),
   providers: [
     SpotifyProvider({
-      clientId: env.SPOTIFY_ID,
-      clientSecret: env.SPOTIFY_SECRET,
+      clientId: env.NEXT_PUBLIC_SPOTIFY_ID,
+      clientSecret: env.NEXT_PUBLIC_SPOTIFY_SECRET,
       authorization: LOGIN_URL,
     }),
     /**

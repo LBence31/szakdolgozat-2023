@@ -8,13 +8,14 @@ import { useEffect } from "react";
 
 import { getServerSession } from "next-auth/next";
 import { authOptions } from "~/server/auth";
-import type { GetServerSidePropsContext } from "next";
+import type { GetServerSidePropsContext, NextPage } from "next";
+import Sidebar from "./components/Sidebar";
 
 interface Props {
   state: string;
 }
 
-const Home = ({ state }: Props) => {
+const Home: NextPage = () => {
   const { data: session } = useSession();
 
   useEffect(() => {
@@ -24,23 +25,15 @@ const Home = ({ state }: Props) => {
   }, [session]);
 
   return (
-    <>
+    <div className="h-screen overflow-hidden bg-black">
       <Head>
         <title>Yfitops</title>
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <main>
-        <div className="flex h-screen w-full flex-col items-center justify-center">
-          <h2 className="mt-5">
-            {session ? (
-              <button onClick={() => void signOut()}>Log Out</button>
-            ) : (
-              <button onClick={() => void signIn()}>Log In</button>
-            )}
-          </h2>
-        </div>
+      <main className="flex">
+        <Sidebar />
       </main>
-    </>
+    </div>
   );
 };
 
