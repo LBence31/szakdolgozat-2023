@@ -12,8 +12,6 @@ import useSongInfo from "~/hooks/useSongInfo";
 import useSpotify from "~/hooks/useSpotify";
 
 import {
-  ArrowUturnLeftIcon,
-  ArrowsRightLeftIcon,
   BackwardIcon,
   ForwardIcon,
   PauseIcon,
@@ -44,11 +42,11 @@ export default function Player() {
             setIsPlaying(data.body?.is_playing);
           })
           .catch((error) => {
-            console.log("Something went wrong: ", error);
+            console.log(error.body.error.reason == "NO_ACTIVE_DEVICE");
           });
       })
       .catch((error) => {
-        console.log("Something went wrong: ", error);
+        console.log(error.body.error.reason == "NO_ACTIVE_DEVICE");
       });
   };
 
@@ -56,22 +54,28 @@ export default function Player() {
     spotifyApi
       .getMyCurrentPlaybackState()
       .then((data) => {
-        if (data.body.is_playing) {
-          void spotifyApi.pause();
+        if (data.body != null && data.body.is_playing) {
+          void spotifyApi.pause().catch((error) => {
+            console.log(error.body.error.reason == "NO_ACTIVE_DEVICE");
+          });
           setIsPlaying(false);
         } else {
-          void spotifyApi.play();
+          void spotifyApi.play().catch((error) => {
+            console.log(error.body.error.reason == "NO_ACTIVE_DEVICE");
+          });
           setIsPlaying(true);
         }
       })
       .catch((error) => {
-        console.log("Somethin went wrong: ", error);
+        console.log(error);
       });
   };
 
   const debouncedAdjustVolume = useCallback(
     debounce((volume: number) => {
-      void spotifyApi.setVolume(volume);
+      void spotifyApi.setVolume(volume).catch((error) => {
+        console.log(error.body.error.reason == "NO_ACTIVE_DEVICE");
+      });
     }, 300),
     []
   );
@@ -106,7 +110,9 @@ export default function Player() {
       <div className="flex items-center justify-evenly">
         <BackwardIcon
           onClick={() => {
-            void spotifyApi.skipToPrevious();
+            void spotifyApi.skipToPrevious().catch((error) => {
+              console.log(error.body.error.reason == "NO_ACTIVE_DEVICE");
+            });
             fetchCurrentSong();
           }}
           className="button"
@@ -118,7 +124,9 @@ export default function Player() {
         )}
         <ForwardIcon
           onClick={() => {
-            void spotifyApi.skipToNext();
+            void spotifyApi.skipToNext().catch((error) => {
+              console.log(error.body.error.reason == "NO_ACTIVE_DEVICE");
+            });
             fetchCurrentSong();
           }}
           className="button"

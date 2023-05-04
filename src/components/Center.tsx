@@ -11,6 +11,7 @@ import { useRecoilState, useRecoilValue } from "recoil";
 import { playlistIdState, playlistState } from "~/atoms/playlistAtom";
 import useSpotify from "~/hooks/useSpotify";
 import Songs from "./Songs";
+import reloadSession from "~/lib/reloadSession";
 
 const colors: string[] = [
   "from-indigo-500",
@@ -41,7 +42,11 @@ export default function Center() {
       .then((data) => {
         setPlaylist(data.body);
       })
-      .catch((error) => console.log("Something went wrong!", error));
+      .catch((error) => {
+        if (error.body.error.status == 401) {
+          reloadSession();
+        }
+      });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [spotifyApi, playlistId]);
 

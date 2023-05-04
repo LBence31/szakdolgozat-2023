@@ -23,9 +23,13 @@ export default function Song({ order, track }: Props) {
   const playSong = () => {
     setCurrentTrackId(track.track.id);
     setIsPlaying(true);
-    void spotifyApi.play({
-      uris: [track.track.uri],
-    });
+    void spotifyApi
+      .play({
+        uris: [track.track.uri],
+      })
+      .catch((error) => {
+        console.log(error.body.error.reason == "NO_ACTIVE_DEVICE");
+      });
   };
 
   return (

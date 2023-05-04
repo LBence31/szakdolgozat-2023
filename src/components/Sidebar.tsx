@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-non-null-assertion */
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
@@ -6,6 +7,8 @@ import { useEffect, useState } from "react";
 import useSpotify from "~/hooks/useSpotify";
 import { useRecoilState } from "recoil";
 import { playlistIdState } from "~/atoms/playlistAtom";
+import reloadSession from "~/lib/reloadSession";
+import { api } from "~/utils/api";
 
 export default function Sidebar() {
   const spotifyApi = useSpotify();
@@ -19,12 +22,22 @@ export default function Sidebar() {
         .getUserPlaylists()
         .then((data) => {
           setPlaylists(data.body.items);
+          playlists.forEach((playlist) => {
+            addPlaylists.mutate({
+              userId: session!.user.id,
+              playlistId: playlist.id,
+            });
+          });
         })
         .catch((error) => {
-          console.log(error);
+          if (error.body.error.status == 401) {
+            reloadSession();
+          }
         });
     }
   }, [session, spotifyApi]);
+
+  const addPlaylists = api.playlist.addPlaylist.useMutation();
 
   return (
     <div className="hidden h-screen overflow-y-scroll border-r border-gray-900 p-5 pb-36 text-xs text-gray-500 scrollbar-hide sm:max-w-[12rem] md:inline-flex lg:max-w-[15rem] lg:text-sm">
@@ -46,7 +59,7 @@ export default function Sidebar() {
         })}
 
         <hr className="border-t-[0.1px] border-gray-900" />
-        <div className="flex items-center">
+        <div className="flex items-center pb-28">
           <p className="font-bold text-white">Your Followed Playlists</p>
         </div>
       </div>

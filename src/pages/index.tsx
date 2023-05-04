@@ -44,7 +44,7 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
   const session = await getServerSession(context.req, context.res, authOptions);
 
   if (!session) {
-    return { redirect: { destination: "/signin" } };
+    return { redirect: { destination: "/api/auth/signin" } };
   }
 
   return {
