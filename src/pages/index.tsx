@@ -9,21 +9,16 @@ import { useEffect } from "react";
 import { getServerSession } from "next-auth/next";
 import { authOptions } from "~/server/auth";
 import type { GetServerSidePropsContext, NextPage } from "next";
-import Sidebar from "./components/Sidebar";
+import Sidebar from "~/components/Sidebar";
+import Center from "~/components/Center";
+import Recommend from "~/components/Recommend";
+import Player from "~/components/Player";
 
 interface Props {
   state: string;
 }
 
 const Home: NextPage = () => {
-  const { data: session } = useSession();
-
-  useEffect(() => {
-    if (session?.error === "RefreshAccessTokenError") {
-      void signIn(); // Force sign in to hopefully resolve error
-    }
-  }, [session]);
-
   return (
     <div className="h-screen overflow-hidden bg-black">
       <Head>
@@ -32,7 +27,13 @@ const Home: NextPage = () => {
       </Head>
       <main className="flex">
         <Sidebar />
+        <Center />
+        <Recommend />
       </main>
+
+      <div className="sticky bottom-0">
+        <Player />
+      </div>
     </div>
   );
 };
@@ -47,6 +48,6 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
   }
 
   return {
-    props: { state: "ok" },
+    props: { session },
   };
 }

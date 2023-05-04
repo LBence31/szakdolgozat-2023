@@ -1,15 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
-import {
-  HomeIcon,
-  MagnifyingGlassIcon,
-  BuildingLibraryIcon,
-  HeartIcon,
-  RssIcon,
-  PlusCircleIcon,
-} from "@heroicons/react/24/outline";
-import { signOut, useSession } from "next-auth/react";
+import { useSession } from "next-auth/react";
 import { useEffect, useState } from "react";
 import useSpotify from "~/hooks/useSpotify";
 import { useRecoilState } from "recoil";
