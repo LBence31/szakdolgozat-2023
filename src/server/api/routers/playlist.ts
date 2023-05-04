@@ -22,4 +22,21 @@ export const playlistRouter = createTRPCRouter({
         },
       });
     }),
+
+  getUsePlaylists: protectedProcedure
+    .input(
+      z.object({
+        userId: z.string(),
+      })
+    )
+    .query(({ ctx, input }) => {
+      return ctx.prisma.playlist.findMany({
+        where: {
+          userId: input.userId,
+        },
+        select: {
+          id: true,
+        },
+      });
+    }),
 });

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-non-null-assertion */
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 /* eslint-disable @typescript-eslint/no-explicit-any */
@@ -12,6 +13,7 @@ import { playlistIdState, playlistState } from "~/atoms/playlistAtom";
 import useSpotify from "~/hooks/useSpotify";
 import Songs from "./Songs";
 import reloadSession from "~/lib/reloadSession";
+import { api } from "~/utils/api";
 
 const colors: string[] = [
   "from-indigo-500",
@@ -29,6 +31,9 @@ export default function Center() {
   const [color, setColor] = useState<string>("");
   const playlistId = useRecoilValue<string>(playlistIdState);
   const [playlist, setPlaylist] = useRecoilState<any>(playlistState);
+  const getUserPlaylistIDs = api.playlist.getUsePlaylists.useQuery({
+    userId: session!.user.id,
+  });
 
   useEffect(() => {
     // @ts-ignore
