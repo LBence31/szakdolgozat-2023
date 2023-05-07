@@ -56,11 +56,13 @@ export default function Player() {
       .then((data) => {
         if (data.body != null && data.body.is_playing) {
           void spotifyApi.pause().catch((error) => {
+            console.log(error.body.error.reason);
             console.log(error.body.error.reason == "NO_ACTIVE_DEVICE");
           });
           setIsPlaying(false);
         } else {
           void spotifyApi.play().catch((error) => {
+            console.log(error.body.error.reason);
             console.log(error.body.error.reason == "NO_ACTIVE_DEVICE");
           });
           setIsPlaying(true);
@@ -74,6 +76,7 @@ export default function Player() {
   const debouncedAdjustVolume = useCallback(
     debounce((volume: number) => {
       void spotifyApi.setVolume(volume).catch((error) => {
+        console.log(error.body.error.reason);
         console.log(error.body.error.reason == "NO_ACTIVE_DEVICE");
       });
     }, 300),

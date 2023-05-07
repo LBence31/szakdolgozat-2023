@@ -12,7 +12,7 @@ export default function Songs() {
   return (
     <div className="flex flex-col space-y-1 px-8 pb-28 text-white">
       {playlist?.tracks.items.map((track, i) => {
-        return <Song key={track.track.id} track={track} order={i} />;
+        return <Song key={i} track={track} order={i} />;
       })}
     </div>
   );
