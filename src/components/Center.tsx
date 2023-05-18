@@ -32,7 +32,7 @@ export default function Center() {
   const [color, setColor] = useState<string>("");
   const playlistId = useRecoilValue<string>(playlistIdState);
   const [playlist, setPlaylist] = useRecoilState<any>(playlistState);
-  const getUserPlaylistIDs = api.playlist.getUsePlaylists.useQuery({
+  const getUserPlaylistIDs = api.playlist.getUserPlaylists.useQuery({
     userId: session!.user.id,
   });
 

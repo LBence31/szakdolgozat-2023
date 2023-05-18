@@ -23,7 +23,7 @@ export const playlistRouter = createTRPCRouter({
       });
     }),
 
-  getUsePlaylists: protectedProcedure
+  getUserPlaylists: protectedProcedure
     .input(
       z.object({
         userId: z.string(),
