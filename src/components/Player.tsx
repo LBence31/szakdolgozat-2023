@@ -36,7 +36,6 @@ export default function Player() {
     spotifyApi
       .getMyCurrentPlayingTrack()
       .then((data) => {
-        setIsPremium(true);
         setCurrentTrackId(data.body?.item?.id);
 
         spotifyApi
@@ -45,13 +44,19 @@ export default function Player() {
             setIsPlaying(data.body?.is_playing);
           })
           .catch((error) => {
-            setIsPremium(false);
-            console.log(error.body.error.reason == "NO_ACTIVE_DEVICE");
+            if (error.body.error.reason == "PREMIUM_REQUIRED") {
+              setIsPremium(false);
+            } else {
+              console.log(error.body.error.reason);
+            }
           });
       })
       .catch((error) => {
-        setIsPremium(false);
-        console.log(error.body.error.reason == "NO_ACTIVE_DEVICE");
+        if (error.body.error.reason == "PREMIUM_REQUIRED") {
+          setIsPremium(false);
+        } else {
+          console.log(error.body.error.reason);
+        }
       });
   };
 
@@ -61,16 +66,20 @@ export default function Player() {
       .then((data) => {
         if (data.body != null && data.body.is_playing) {
           void spotifyApi.pause().catch((error) => {
-            setIsPremium(false);
-            console.log(error.body.error.reason);
-            console.log(error.body.error.reason == "NO_ACTIVE_DEVICE");
+            if (error.body.error.reason == "PREMIUM_REQUIRED") {
+              setIsPremium(false);
+            } else {
+              console.log(error.body.error.reason);
+            }
           });
           setIsPlaying(false);
         } else {
           void spotifyApi.play().catch((error) => {
-            setIsPremium(false);
-            console.log(error.body.error.reason);
-            console.log(error.body.error.reason == "NO_ACTIVE_DEVICE");
+            if (error.body.error.reason == "PREMIUM_REQUIRED") {
+              setIsPremium(false);
+            } else {
+              console.log(error.body.error.reason);
+            }
           });
           setIsPlaying(true);
         }
@@ -83,9 +92,11 @@ export default function Player() {
   const debouncedAdjustVolume = useCallback(
     debounce((volume: number) => {
       void spotifyApi.setVolume(volume).catch((error) => {
-        setIsPremium(false);
-        console.log(error.body.error.reason);
-        console.log(error.body.error.reason == "NO_ACTIVE_DEVICE");
+        if (error.body.error.reason == "PREMIUM_REQUIRED") {
+          setIsPremium(false);
+        } else {
+          console.log(error.body.error.reason);
+        }
       });
     }, 300),
     []

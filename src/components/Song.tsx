@@ -33,8 +33,11 @@ export default function Song({ order, track }: Props) {
         setIsPremium(true);
       })
       .catch((error) => {
-        setIsPremium(false);
-        console.log(error.body.error.reason == "NO_ACTIVE_DEVICE");
+        if (error.body.error.reason == "PREMIUM_REQUIRED") {
+          setIsPremium(false);
+        } else {
+          console.log(error.body.error.reason);
+        }
       });
   };
 
