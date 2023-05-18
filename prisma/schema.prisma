@@ -64,14 +64,14 @@ model VerificationToken {
 model Playlist {
     id             String             @id
     userId         String
-    user           User               @relation(fields: [userId], references: [id])
+    user           User               @relation(fields: [userId], references: [id], onDelete: Cascade)
     followingUsers UsersOnPlaylists[]
 }
 
 model UsersOnPlaylists {
-    user       User     @relation(fields: [userId], references: [id])
+    user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
     userId     String
-    playlist   Playlist @relation(fields: [playlistId], references: [id])
+    playlist   Playlist @relation(fields: [playlistId], references: [id], onDelete: Cascade)
     playlistId String
     assignedAt DateTime @default(now())
 
