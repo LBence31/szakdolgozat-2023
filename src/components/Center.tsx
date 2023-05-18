@@ -15,6 +15,8 @@ import Songs from "./Songs";
 import reloadSession from "~/lib/reloadSession";
 import { api } from "~/utils/api";
 import { UserCircleIcon } from "@heroicons/react/20/solid";
+import PlayerErrorBox from "./PlayerErrorBox";
+import { infoBoxUpState } from "~/atoms/infoBoxAtom";
 
 const colors: string[] = [
   "from-indigo-500",
@@ -35,6 +37,7 @@ export default function Center() {
   const getUserPlaylistIDs = api.playlist.getUserPlaylists.useQuery({
     userId: session!.user.id,
   });
+  const [infoBoxVisible, setInfoBoxVisible] = useRecoilState(infoBoxUpState);
 
   useEffect(() => {
     // @ts-ignore
@@ -58,6 +61,7 @@ export default function Center() {
 
   return (
     <div className="relative h-screen flex-grow overflow-y-scroll scrollbar-hide">
+      {infoBoxVisible && <PlayerErrorBox />}
       <header className="absolute right-8 top-5">
         <div
           className="flex cursor-pointer items-center space-x-3 rounded-full bg-black p-1 pr-2 text-white opacity-90 hover:opacity-80"

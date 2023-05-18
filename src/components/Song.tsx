@@ -5,6 +5,7 @@
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 /* eslint-disable @next/next/no-img-element */
 import { useRecoilState } from "recoil";
+import { infoBoxUpState } from "~/atoms/infoBoxAtom";
 import { premiumUserState } from "~/atoms/premiumAtom";
 import { currentTrackIdState, isPlayingState } from "~/atoms/songAtom";
 import useSpotify from "~/hooks/useSpotify";
@@ -21,6 +22,7 @@ export default function Song({ order, track }: Props) {
     useRecoilState<any>(currentTrackIdState);
   const [isPlaying, setIsPlaying] = useRecoilState<any>(isPlayingState);
   const [isPremium, setIsPremium] = useRecoilState(premiumUserState);
+  const [infoBoxVisible, setInfoBoxVisible] = useRecoilState(infoBoxUpState);
 
   const playSong = () => {
     setCurrentTrackId(track.track.id);
@@ -31,10 +33,15 @@ export default function Song({ order, track }: Props) {
       })
       .then(() => {
         setIsPremium(true);
+        setInfoBoxVisible(false);
       })
       .catch((error) => {
         if (error.body.error.reason == "PREMIUM_REQUIRED") {
           setIsPremium(false);
+          setInfoBoxVisible(true);
+        } else if (error.body.error.reason == "NO_ACTIVE_DEVICE") {
+          setIsPremium(true);
+          setInfoBoxVisible(true);
         } else {
           console.log(error.body.error.reason);
         }

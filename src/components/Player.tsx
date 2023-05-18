@@ -20,6 +20,7 @@ import {
 } from "@heroicons/react/24/solid";
 import { SpeakerXMarkIcon, PlayIcon } from "@heroicons/react/24/outline";
 import { debounce } from "lodash";
+import { infoBoxUpState } from "~/atoms/infoBoxAtom";
 
 export default function Player() {
   const spotifyApi = useSpotify();
@@ -29,6 +30,7 @@ export default function Player() {
   const [isPlaying, setIsPlaying] = useRecoilState(isPlayingState);
   const [volume, setVolume] = useState<number>(50);
   const [isPremium, setIsPremium] = useRecoilState(premiumUserState);
+  const [infoBoxVisible, setInfoBoxVisible] = useRecoilState(infoBoxUpState);
 
   const songInfo: any = useSongInfo();
 
@@ -42,10 +44,14 @@ export default function Player() {
           .getMyCurrentPlaybackState()
           .then((data) => {
             setIsPlaying(data.body?.is_playing);
+            setInfoBoxVisible(false);
           })
           .catch((error) => {
             if (error.body.error.reason == "PREMIUM_REQUIRED") {
               setIsPremium(false);
+            } else if (error.body.error.reason == "NO_ACTIVE_DEVICE") {
+              setIsPremium(true);
+              setInfoBoxVisible(true);
             } else {
               console.log(error.body.error.reason);
             }
@@ -54,6 +60,9 @@ export default function Player() {
       .catch((error) => {
         if (error.body.error.reason == "PREMIUM_REQUIRED") {
           setIsPremium(false);
+        } else if (error.body.error.reason == "NO_ACTIVE_DEVICE") {
+          setIsPremium(true);
+          setInfoBoxVisible(true);
         } else {
           console.log(error.body.error.reason);
         }
@@ -65,22 +74,38 @@ export default function Player() {
       .getMyCurrentPlaybackState()
       .then((data) => {
         if (data.body != null && data.body.is_playing) {
-          void spotifyApi.pause().catch((error) => {
-            if (error.body.error.reason == "PREMIUM_REQUIRED") {
-              setIsPremium(false);
-            } else {
-              console.log(error.body.error.reason);
-            }
-          });
+          void spotifyApi
+            .pause()
+            .then(() => {
+              setInfoBoxVisible(false);
+            })
+            .catch((error) => {
+              if (error.body.error.reason == "PREMIUM_REQUIRED") {
+                setIsPremium(false);
+              } else if (error.body.error.reason == "NO_ACTIVE_DEVICE") {
+                setIsPremium(true);
+                setInfoBoxVisible(true);
+              } else {
+                console.log(error.body.error.reason);
+              }
+            });
           setIsPlaying(false);
         } else {
-          void spotifyApi.play().catch((error) => {
-            if (error.body.error.reason == "PREMIUM_REQUIRED") {
-              setIsPremium(false);
-            } else {
-              console.log(error.body.error.reason);
-            }
-          });
+          void spotifyApi
+            .play()
+            .then(() => {
+              setInfoBoxVisible(false);
+            })
+            .catch((error) => {
+              if (error.body.error.reason == "PREMIUM_REQUIRED") {
+                setIsPremium(false);
+              } else if (error.body.error.reason == "NO_ACTIVE_DEVICE") {
+                setIsPremium(true);
+                setInfoBoxVisible(true);
+              } else {
+                console.log(error.body.error.reason);
+              }
+            });
           setIsPlaying(true);
         }
       })
@@ -91,13 +116,21 @@ export default function Player() {
 
   const debouncedAdjustVolume = useCallback(
     debounce((volume: number) => {
-      void spotifyApi.setVolume(volume).catch((error) => {
-        if (error.body.error.reason == "PREMIUM_REQUIRED") {
-          setIsPremium(false);
-        } else {
-          console.log(error.body.error.reason);
-        }
-      });
+      void spotifyApi
+        .setVolume(volume)
+        .then(() => {
+          setInfoBoxVisible(false);
+        })
+        .catch((error) => {
+          if (error.body.error.reason == "PREMIUM_REQUIRED") {
+            setIsPremium(false);
+          } else if (error.body.error.reason == "NO_ACTIVE_DEVICE") {
+            setIsPremium(true);
+            setInfoBoxVisible(true);
+          } else {
+            console.log(error.body.error.reason);
+          }
+        });
     }, 300),
     []
   );
