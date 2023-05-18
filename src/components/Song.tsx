@@ -5,6 +5,7 @@
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 /* eslint-disable @next/next/no-img-element */
 import { useRecoilState } from "recoil";
+import { premiumUserState } from "~/atoms/premiumAtom";
 import { currentTrackIdState, isPlayingState } from "~/atoms/songAtom";
 import useSpotify from "~/hooks/useSpotify";
 import { milisTiMinutesAndSecods } from "~/lib/time";
@@ -19,6 +20,7 @@ export default function Song({ order, track }: Props) {
   const [currentTrackId, setCurrentTrackId] =
     useRecoilState<any>(currentTrackIdState);
   const [isPlaying, setIsPlaying] = useRecoilState<any>(isPlayingState);
+  const [isPremium, setIsPremium] = useRecoilState(premiumUserState);
 
   const playSong = () => {
     setCurrentTrackId(track.track.id);
@@ -27,7 +29,11 @@ export default function Song({ order, track }: Props) {
       .play({
         uris: [track.track.uri],
       })
+      .then(() => {
+        setIsPremium(true);
+      })
       .catch((error) => {
+        setIsPremium(false);
         console.log(error.body.error.reason == "NO_ACTIVE_DEVICE");
       });
   };

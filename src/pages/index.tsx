@@ -1,11 +1,4 @@
-import { signIn, useSession } from "next-auth/react";
 import Head from "next/head";
-
-import { api } from "~/utils/api";
-
-import { signOut } from "next-auth/react";
-import { useEffect } from "react";
-
 import { getServerSession } from "next-auth/next";
 import { authOptions } from "~/server/auth";
 import type { GetServerSidePropsContext, NextPage } from "next";
@@ -13,12 +6,16 @@ import Sidebar from "~/components/Sidebar";
 import Center from "~/components/Center";
 import Recommend from "~/components/Recommend";
 import Player from "~/components/Player";
+import { premiumUserState } from "~/atoms/premiumAtom";
+import { useRecoilState } from "recoil";
 
 interface Props {
   state: string;
 }
 
 const Home: NextPage = () => {
+  const [isPremium] = useRecoilState(premiumUserState);
+
   return (
     <div className="h-screen overflow-hidden bg-black">
       <Head>
@@ -31,9 +28,7 @@ const Home: NextPage = () => {
         <Recommend />
       </main>
 
-      <div className="sticky bottom-0">
-        <Player />
-      </div>
+      <div className="sticky bottom-0">{isPremium && <Player />}</div>
     </div>
   );
 };
