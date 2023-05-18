@@ -14,6 +14,7 @@ import useSpotify from "~/hooks/useSpotify";
 import Songs from "./Songs";
 import reloadSession from "~/lib/reloadSession";
 import { api } from "~/utils/api";
+import { UserCircleIcon } from "@heroicons/react/20/solid";
 
 const colors: string[] = [
   "from-indigo-500",
@@ -62,11 +63,16 @@ export default function Center() {
           className="flex cursor-pointer items-center space-x-3 rounded-full bg-black p-1 pr-2 text-white opacity-90 hover:opacity-80"
           onClick={() => void signOut()}
         >
-          <img
-            className="h-10 w-10 rounded-full"
-            src={session?.user.image}
-            alt="profile picture"
-          />
+          {session?.user.image ? (
+            <img
+              className="h-10 w-10 rounded-full"
+              src={session?.user.image}
+              alt="profile picture"
+            />
+          ) : (
+            <UserCircleIcon className="h-10 w-10 rounded-full" />
+          )}
+
           <h2>{session?.user.name}</h2>
           <ChevronDownIcon className="h-5 w-5" />
         </div>
