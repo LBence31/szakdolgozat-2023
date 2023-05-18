@@ -10,6 +10,7 @@ import { isPlayingState } from "~/atoms/songAtom";
 import { currentTrackIdState } from "~/atoms/songAtom";
 import useSongInfo from "~/hooks/useSongInfo";
 import useSpotify from "~/hooks/useSpotify";
+import { premiumUserState } from "~/atoms/premiumAtom";
 
 import {
   BackwardIcon,
@@ -27,6 +28,7 @@ export default function Player() {
     useRecoilState<any>(currentTrackIdState);
   const [isPlaying, setIsPlaying] = useRecoilState(isPlayingState);
   const [volume, setVolume] = useState<number>(50);
+  const [isPremium, setIsPremium] = useRecoilState(premiumUserState);
 
   const songInfo: any = useSongInfo();
 
@@ -34,6 +36,7 @@ export default function Player() {
     spotifyApi
       .getMyCurrentPlayingTrack()
       .then((data) => {
+        setIsPremium(true);
         setCurrentTrackId(data.body?.item?.id);
 
         spotifyApi
@@ -42,10 +45,12 @@ export default function Player() {
             setIsPlaying(data.body?.is_playing);
           })
           .catch((error) => {
+            setIsPremium(false);
             console.log(error.body.error.reason == "NO_ACTIVE_DEVICE");
           });
       })
       .catch((error) => {
+        setIsPremium(false);
         console.log(error.body.error.reason == "NO_ACTIVE_DEVICE");
       });
   };
@@ -56,12 +61,14 @@ export default function Player() {
       .then((data) => {
         if (data.body != null && data.body.is_playing) {
           void spotifyApi.pause().catch((error) => {
+            setIsPremium(false);
             console.log(error.body.error.reason);
             console.log(error.body.error.reason == "NO_ACTIVE_DEVICE");
           });
           setIsPlaying(false);
         } else {
           void spotifyApi.play().catch((error) => {
+            setIsPremium(false);
             console.log(error.body.error.reason);
             console.log(error.body.error.reason == "NO_ACTIVE_DEVICE");
           });
@@ -76,6 +83,7 @@ export default function Player() {
   const debouncedAdjustVolume = useCallback(
     debounce((volume: number) => {
       void spotifyApi.setVolume(volume).catch((error) => {
+        setIsPremium(false);
         console.log(error.body.error.reason);
         console.log(error.body.error.reason == "NO_ACTIVE_DEVICE");
       });
