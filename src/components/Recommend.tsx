@@ -30,11 +30,13 @@ export default function Recommend() {
         .then((data) => {
           setRecommendedPlaylistsUS(data.body.playlists.items);
           recommendedPlaylistsUS.forEach((playlist) => {
-            addPlaylist.mutate({
-              playlistId: playlist.id,
-              userId: getSpotifyUser.data!.id,
-              playlistName: playlist.name,
-            });
+            if (playlist != null) {
+              addPlaylist.mutate({
+                playlistId: playlist.id,
+                userId: getSpotifyUser.data!.id,
+                playlistName: playlist.name,
+              });
+            }
           });
         })
         .catch((error) => {
@@ -46,11 +48,13 @@ export default function Recommend() {
         .then((data) => {
           setRecommendedPlaylistsHU(data.body.playlists.items);
           recommendedPlaylistsHU.forEach((playlist) => {
-            addPlaylist.mutate({
-              playlistId: playlist.id,
-              userId: getSpotifyUser.data!.id,
-              playlistName: playlist.name,
-            });
+            if (playlist != null) {
+              addPlaylist.mutate({
+                playlistId: playlist.id,
+                userId: getSpotifyUser.data!.id,
+                playlistName: playlist.name,
+              });
+            }
           });
         })
         .catch((error) => {
@@ -59,6 +63,8 @@ export default function Recommend() {
     }
   }, [session, spotifyApi, getSpotifyUser.data]);
 
+  console.log(recommendedPlaylistsUS);
+
   return (
     <div className="hidden h-screen overflow-y-scroll border-l border-gray-900 p-5 pb-36 text-xs text-gray-500 scrollbar-hide sm:max-w-[12rem] md:inline-flex md:flex-col lg:max-w-[15rem] lg:text-sm">
       <div className="space-y-4">
@@ -66,27 +72,31 @@ export default function Recommend() {
           <p className="font-bold text-white">Featured Playlists</p>
         </div>
         {recommendedPlaylistsUS.map((playlist) => {
-          return (
-            <p
-              key={playlist.id}
-              onClick={() => setPlaylistId(playlist.id)}
-              className="cursor-pointer hover:text-white"
-            >
-              {playlist.name}
-            </p>
-          );
+          if (playlist != null) {
+            return (
+              <p
+                key={playlist.id}
+                onClick={() => setPlaylistId(playlist.id)}
+                className="cursor-pointer hover:text-white"
+              >
+                {playlist.name}
+              </p>
+            );
+          }
         })}
 
         {recommendedPlaylistsHU.map((playlist) => {
-          return (
-            <p
-              key={playlist.id}
-              onClick={() => setPlaylistId(playlist.id)}
-              className="cursor-pointer hover:text-white"
-            >
-              {playlist.name}
-            </p>
-          );
+          if (playlist != null) {
+            return (
+              <p
+                key={playlist.id}
+                onClick={() => setPlaylistId(playlist.id)}
+                className="cursor-pointer hover:text-white"
+              >
+                {playlist.name}
+              </p>
+            );
+          }
         })}
       </div>
     </div>
