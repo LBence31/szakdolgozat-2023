@@ -4,7 +4,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 /* eslint-disable @next/next/no-img-element */
-import { ChevronDownIcon } from "@heroicons/react/24/outline";
+import { ArrowRightOnRectangleIcon } from "@heroicons/react/24/outline";
 import { signOut, useSession } from "next-auth/react";
 import { useEffect, useState } from "react";
 import { shuffle } from "lodash";
@@ -61,21 +61,25 @@ export default function Center() {
       {infoBoxVisible && <PlayerErrorBox />}
       <header className="absolute right-8 top-5">
         <div
-          className="flex cursor-pointer items-center space-x-3 rounded-full bg-black p-1 pr-2 text-white opacity-90 hover:opacity-80"
+          className="flex cursor-pointer items-center space-x-3 rounded-full bg-black p-1 pr-3 text-white opacity-90 hover:opacity-80"
           onClick={() => void signOut()}
         >
           {session?.user.image ? (
-            <img
-              className="h-10 w-10 rounded-full"
-              src={session?.user.image}
-              alt="profile picture"
-            />
+            session?.user.image?.includes("platform") ? (
+              <UserCircleIcon className="h-10 w-10 rounded-full" />
+            ) : (
+              <img
+                className="h-10 w-10 rounded-full"
+                src={session?.user.image}
+                alt="profile picture"
+              />
+            )
           ) : (
             <UserCircleIcon className="h-10 w-10 rounded-full" />
           )}
 
           <h2>{session?.user.name}</h2>
-          <ChevronDownIcon className="h-5 w-5" />
+          <ArrowRightOnRectangleIcon className="h-5 w-5" />
         </div>
       </header>
 
