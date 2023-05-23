@@ -182,7 +182,6 @@ export default function Player() {
                   console.log(error.body.error.reason);
                 }
               });
-            fetchCurrentSong();
           }}
           className="button"
         />
