@@ -4,7 +4,7 @@
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import useSpotify from "~/hooks/useSpotify";
 import { useSession } from "next-auth/react";
-import { SetStateAction, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useRecoilState } from "recoil";
 import { playlistIdState } from "~/atoms/playlistAtom";
 import { api } from "~/utils/api";
