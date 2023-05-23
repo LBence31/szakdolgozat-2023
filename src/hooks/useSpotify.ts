@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-non-null-assertion */
 /* eslint-disable @typescript-eslint/no-unsafe-argument */
 import SpotifyWebApi from "spotify-web-api-node";
 import { useSession, signIn } from "next-auth/react";
@@ -18,7 +19,7 @@ export default function useSpotify() {
         void signIn();
       }
 
-      spotifyApi.setAccessToken(session.user.accessToken);
+      spotifyApi.setAccessToken(session.user.accessToken!);
     }
   }, [session]);
 

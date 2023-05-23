@@ -20,7 +20,7 @@ export default function FollowedPlaylists() {
   } else {
     return (
       <div className="flex flex-col space-y-4">
-        {followedPlaylists.data.map((playlist) => {
+        {followedPlaylists.data!.map((playlist) => {
           return (
             <p
               key={playlist.playlist.id}
