@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-implied-eval */
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
@@ -46,7 +47,7 @@ export default function Center() {
     spotifyApi
       .getPlaylist(playlistId)
       .then((data) => {
-        setTimeout(setPlaylist(data.body), 50);
+        setTimeout(setPlaylist, 50, data.body);
       })
       .catch((error) => {
         if (error.body.error.status == 401) {
