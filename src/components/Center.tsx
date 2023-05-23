@@ -13,10 +13,10 @@ import { playlistIdState, playlistState } from "~/atoms/playlistAtom";
 import useSpotify from "~/hooks/useSpotify";
 import Songs from "./Songs";
 import reloadSession from "~/lib/reloadSession";
-import { api } from "~/utils/api";
 import { UserCircleIcon } from "@heroicons/react/20/solid";
 import PlayerErrorBox from "./PlayerErrorBox";
 import { infoBoxUpState } from "~/atoms/infoBoxAtom";
+import FollowButton from "./FollowButton";
 
 const colors: string[] = [
   "from-indigo-500",
@@ -34,9 +34,6 @@ export default function Center() {
   const [color, setColor] = useState<string>("");
   const playlistId = useRecoilValue<string>(playlistIdState);
   const [playlist, setPlaylist] = useRecoilState<any>(playlistState);
-  const getUserPlaylistIDs = api.playlist.getUserPlaylists.useQuery({
-    userId: session!.user.id,
-  });
   const [infoBoxVisible, setInfoBoxVisible] = useRecoilState(infoBoxUpState);
 
   useEffect(() => {
@@ -92,9 +89,12 @@ export default function Center() {
         />
         <div>
           <p>PLAYLIST</p>
-          <h1 className="text-2xl font-bold md:text-3xl xl:text-5xl">
-            {playlist?.name}
-          </h1>
+          <div className="flex items-center space-x-3">
+            <h1 className="text-2xl font-bold md:text-3xl xl:text-5xl">
+              {playlist?.name}
+            </h1>
+            <FollowButton />
+          </div>
         </div>
       </section>
 

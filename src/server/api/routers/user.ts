@@ -23,4 +23,12 @@ export const userRouter = createTRPCRouter({
         },
       });
     }),
+
+  getSpotifyUserID: protectedProcedure.query(({ ctx }) => {
+    return ctx.prisma.user.findFirst({
+      where: {
+        email: "spotify@spotify.com",
+      },
+    });
+  }),
 });

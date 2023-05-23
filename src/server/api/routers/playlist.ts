@@ -8,6 +8,7 @@ export const playlistRouter = createTRPCRouter({
       z.object({
         userId: z.string(),
         playlistId: z.string(),
+        playlistName: z.string(),
       })
     )
     .mutation(({ ctx, input }) => {
@@ -15,10 +16,13 @@ export const playlistRouter = createTRPCRouter({
         where: {
           id: input.playlistId,
         },
-        update: {},
+        update: {
+          name: input.playlistName,
+        },
         create: {
           id: input.playlistId,
           userId: input.userId,
+          name: input.playlistName,
         },
       });
     }),

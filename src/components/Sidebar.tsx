@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unsafe-call */
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable @typescript-eslint/no-explicit-any */
@@ -9,12 +10,14 @@ import { useRecoilState } from "recoil";
 import { playlistIdState } from "~/atoms/playlistAtom";
 import reloadSession from "~/lib/reloadSession";
 import { api } from "~/utils/api";
+import FollowedPlaylists from "./FollowedPlaylists";
 
 export default function Sidebar() {
   const spotifyApi = useSpotify();
   const { data: session, status } = useSession();
   const [playlists, setPlaylists] = useState<any[]>([]);
   const [playlistId, setPlaylistId] = useRecoilState<any>(playlistIdState);
+  const addPlaylists = api.playlist.addPlaylist.useMutation();
 
   useEffect(() => {
     if (spotifyApi.getAccessToken()) {
@@ -26,6 +29,7 @@ export default function Sidebar() {
             addPlaylists.mutate({
               userId: session!.user.id,
               playlistId: playlist.id,
+              playlistName: playlist.name,
             });
           });
         })
@@ -36,8 +40,6 @@ export default function Sidebar() {
         });
     }
   }, [session, spotifyApi]);
-
-  const addPlaylists = api.playlist.addPlaylist.useMutation();
 
   return (
     <div className="hidden h-screen overflow-y-scroll border-r border-gray-900 p-5 pb-36 text-xs text-gray-500 scrollbar-hide sm:max-w-[12rem] md:inline-flex lg:max-w-[15rem] lg:text-sm">
@@ -59,9 +61,11 @@ export default function Sidebar() {
         })}
 
         <hr className="border-t-[0.1px] border-gray-900" />
-        <div className="flex items-center pb-28">
+        <div className="flex items-center">
           <p className="font-bold text-white">Your Followed Playlists</p>
         </div>
+        <FollowedPlaylists />
+        <div className="pb-28" />
       </div>
     </div>
   );

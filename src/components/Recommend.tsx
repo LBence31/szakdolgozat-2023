@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-non-null-assertion */
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
@@ -6,6 +7,7 @@ import { useSession } from "next-auth/react";
 import { SetStateAction, useEffect, useState } from "react";
 import { useRecoilState } from "recoil";
 import { playlistIdState } from "~/atoms/playlistAtom";
+import { api } from "~/utils/api";
 
 export default function Recommend() {
   const spotifyApi = useSpotify();
@@ -17,6 +19,9 @@ export default function Recommend() {
     []
   );
 
+  const addPlaylist = api.playlist.addPlaylist.useMutation();
+  const getSpotifyUser = api.user.getSpotifyUserID.useQuery();
+
   const [playlistId, setPlaylistId] = useRecoilState<any>(playlistIdState);
   useEffect(() => {
     if (spotifyApi.getAccessToken()) {
@@ -24,6 +29,13 @@ export default function Recommend() {
         .getFeaturedPlaylists({ limit: 20, country: "US" })
         .then((data) => {
           setRecommendedPlaylistsUS(data.body.playlists.items);
+          recommendedPlaylistsUS.forEach((playlist) => {
+            addPlaylist.mutate({
+              playlistId: playlist.id,
+              userId: getSpotifyUser.data!.id,
+              playlistName: playlist.name,
+            });
+          });
         })
         .catch((error) => {
           console.log(error);
@@ -33,6 +45,13 @@ export default function Recommend() {
         .getFeaturedPlaylists({ limit: 20, country: "HU" })
         .then((data) => {
           setRecommendedPlaylistsHU(data.body.playlists.items);
+          recommendedPlaylistsHU.forEach((playlist) => {
+            addPlaylist.mutate({
+              playlistId: playlist.id,
+              userId: getSpotifyUser.data!.id,
+              playlistName: playlist.name,
+            });
+          });
         })
         .catch((error) => {
           console.log(error);
