@@ -168,7 +168,7 @@ export default function Player() {
             spotifyApi
               .skipToPrevious()
               .then(() => {
-                setTimeout(fetchCurrentSong, 50);
+                setTimeout(fetchCurrentSong, 200);
               })
               .catch((error) => {
                 if (error.body.error.reason == "PREMIUM_REQUIRED") {

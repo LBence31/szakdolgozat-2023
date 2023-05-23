@@ -9,10 +9,6 @@ import Player from "~/components/Player";
 import { premiumUserState } from "~/atoms/premiumAtom";
 import { useRecoilState } from "recoil";
 
-interface Props {
-  state: string;
-}
-
 const Home: NextPage = () => {
   const [isPremium] = useRecoilState(premiumUserState);
 
