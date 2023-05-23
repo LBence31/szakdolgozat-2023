@@ -4,8 +4,9 @@
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 /* eslint-disable @next/next/no-img-element */
-import { useRecoilState } from "recoil";
+import { useRecoilState, useRecoilValue } from "recoil";
 import { infoBoxUpState } from "~/atoms/infoBoxAtom";
+import { playlistIdState } from "~/atoms/playlistAtom";
 import { premiumUserState } from "~/atoms/premiumAtom";
 import { currentTrackIdState, isPlayingState } from "~/atoms/songAtom";
 import useSpotify from "~/hooks/useSpotify";
@@ -18,6 +19,7 @@ interface Props {
 
 export default function Song({ order, track }: Props) {
   const spotifyApi = useSpotify();
+  const playlistID = useRecoilValue(playlistIdState);
   const [currentTrackId, setCurrentTrackId] =
     useRecoilState<any>(currentTrackIdState);
   const [isPlaying, setIsPlaying] = useRecoilState<any>(isPlayingState);
@@ -27,9 +29,13 @@ export default function Song({ order, track }: Props) {
   const playSong = () => {
     setCurrentTrackId(track.track.id);
     setIsPlaying(true);
+    const context_uri = "spotify:playlist:" + playlistID;
     void spotifyApi
       .play({
-        uris: [track.track.uri],
+        context_uri: context_uri,
+        offset: {
+          position: order,
+        },
       })
       .then(() => {
         setIsPremium(true);

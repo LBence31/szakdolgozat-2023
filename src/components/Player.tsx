@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-non-null-assertion */
 /* eslint-disable @typescript-eslint/no-unsafe-call */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
@@ -37,12 +38,11 @@ export default function Player() {
   const fetchCurrentSong = () => {
     spotifyApi
       .getMyCurrentPlayingTrack()
-      .then((data) => {
-        setCurrentTrackId(data.body?.item?.id);
-
+      .then(() => {
         spotifyApi
           .getMyCurrentPlaybackState()
           .then((data) => {
+            setCurrentTrackId(data.body.item!.id);
             setIsPlaying(data.body?.is_playing);
             setInfoBoxVisible(false);
           })
@@ -165,9 +165,23 @@ export default function Player() {
       <div className="flex items-center justify-evenly">
         <BackwardIcon
           onClick={() => {
-            void spotifyApi.skipToPrevious().catch((error) => {
-              console.log(error.body.error.reason == "NO_ACTIVE_DEVICE");
-            });
+            spotifyApi
+              .skipToPrevious()
+              .then(() => {
+                setTimeout(fetchCurrentSong, 50);
+              })
+              .catch((error) => {
+                if (error.body.error.reason == "PREMIUM_REQUIRED") {
+                  setIsPremium(false);
+                } else if (error.body.error.reason == "NO_ACTIVE_DEVICE") {
+                  setIsPremium(true);
+                  setInfoBoxVisible(true);
+                } else if (error.body.error.reason == "UNKNOWN") {
+                  console.log("There is no previous track");
+                } else {
+                  console.log(error.body.error.reason);
+                }
+              });
             fetchCurrentSong();
           }}
           className="button"
@@ -179,10 +193,23 @@ export default function Player() {
         )}
         <ForwardIcon
           onClick={() => {
-            void spotifyApi.skipToNext().catch((error) => {
-              console.log(error.body.error.reason == "NO_ACTIVE_DEVICE");
-            });
-            fetchCurrentSong();
+            spotifyApi
+              .skipToNext()
+              .then(() => {
+                setTimeout(fetchCurrentSong, 200);
+              })
+              .catch((error) => {
+                if (error.body.error.reason == "PREMIUM_REQUIRED") {
+                  setIsPremium(false);
+                } else if (error.body.error.reason == "NO_ACTIVE_DEVICE") {
+                  setIsPremium(true);
+                  setInfoBoxVisible(true);
+                } else if (error.body.error.reason == "UNKNOWN") {
+                  console.log("There is no previous track");
+                } else {
+                  console.log(error.body.error.reason);
+                }
+              });
           }}
           className="button"
         />

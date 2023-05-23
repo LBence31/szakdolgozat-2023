@@ -57,13 +57,13 @@ export default function Recommend() {
           console.log(error);
         });
     }
-  }, [session, spotifyApi]);
+  }, [session, spotifyApi, getSpotifyUser.data]);
 
   return (
     <div className="hidden h-screen overflow-y-scroll border-l border-gray-900 p-5 pb-36 text-xs text-gray-500 scrollbar-hide sm:max-w-[12rem] md:inline-flex md:flex-col lg:max-w-[15rem] lg:text-sm">
       <div className="space-y-4">
         <div className="flex items-center">
-          <p className="font-bold text-white">Featured PLaylists</p>
+          <p className="font-bold text-white">Featured Playlists</p>
         </div>
         {recommendedPlaylistsUS.map((playlist) => {
           return (

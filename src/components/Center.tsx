@@ -46,7 +46,7 @@ export default function Center() {
     spotifyApi
       .getPlaylist(playlistId)
       .then((data) => {
-        setPlaylist(data.body);
+        setTimeout(setPlaylist(data.body), 50);
       })
       .catch((error) => {
         if (error.body.error.status == 401) {
