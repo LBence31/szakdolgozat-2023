@@ -179,7 +179,7 @@ export default function Player() {
             spotifyApi
               .skipToPrevious()
               .then(() => {
-                setTimeout(fetchCurrentSong, 200);
+                setTimeout(fetchCurrentSong, 500);
               })
               .catch((error) => {
                 if (error.body.error.reason == "PREMIUM_REQUIRED") {
@@ -206,7 +206,7 @@ export default function Player() {
             spotifyApi
               .skipToNext()
               .then(() => {
-                setTimeout(fetchCurrentSong, 200);
+                setTimeout(fetchCurrentSong, 500);
               })
               .catch((error) => {
                 if (error.body.error.reason == "PREMIUM_REQUIRED") {
