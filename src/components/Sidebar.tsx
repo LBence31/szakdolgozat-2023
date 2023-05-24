@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-unsafe-argument */
+/* eslint-disable @typescript-eslint/no-unsafe-return */
 /* eslint-disable @typescript-eslint/no-unsafe-call */
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
@@ -20,20 +22,31 @@ export default function Sidebar() {
   const addPlaylists = api.playlist.addPlaylist.useMutation();
 
   useEffect(() => {
+    setTimeout(() => {
+      return;
+    }, 5);
     if (spotifyApi.getAccessToken()) {
       spotifyApi
         .getUserPlaylists({ limit: 50 })
         .then((data) => {
           setPlaylists(data.body.items);
+          const playlistIds: string[] = [];
+          const playlistNames: string[] = [];
+
           playlists.forEach((playlist) => {
             if (playlist != null) {
-              addPlaylists.mutate({
-                userId: session!.user.id,
-                playlistId: playlist.id,
-                playlistName: playlist.name,
-              });
+              playlistIds.push(playlist.id);
+              playlistNames.push(playlist.name);
             }
           });
+
+          if (playlistIds.length != 0 && playlistNames.length != 0) {
+            addPlaylists.mutate({
+              userId: session!.user.id,
+              playlistIds: playlistIds,
+              playlistNames: playlistNames,
+            });
+          }
         })
         .catch((error) => {
           if (error.body.error.status == 401) {
@@ -41,7 +54,7 @@ export default function Sidebar() {
           }
         });
     }
-  }, [session, spotifyApi]); //playlists
+  }, [session, spotifyApi, playlistId]);
 
   return (
     <div className="hidden h-screen overflow-y-scroll border-r border-gray-900 p-5 pb-36 text-xs text-gray-500 scrollbar-hide sm:max-w-[12rem] md:inline-flex lg:max-w-[15rem] lg:text-sm">

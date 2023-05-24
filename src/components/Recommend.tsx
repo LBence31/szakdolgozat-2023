@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unsafe-argument */
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable @typescript-eslint/no-explicit-any */
@@ -19,7 +20,7 @@ export default function Recommend() {
     []
   );
 
-  const addPlaylist = api.playlist.addPlaylist.useMutation();
+  const addPlaylists = api.playlist.addPlaylist.useMutation();
   const getSpotifyUser = api.user.getSpotifyUserID.useQuery();
 
   const [playlistId, setPlaylistId] = useRecoilState<any>(playlistIdState);
@@ -29,15 +30,22 @@ export default function Recommend() {
         .getFeaturedPlaylists({ limit: 20, country: "US" })
         .then((data) => {
           setRecommendedPlaylistsUS(data.body.playlists.items);
+          const playlistIds: string[] = [];
+          const playlistNames: string[] = [];
+
           recommendedPlaylistsUS.forEach((playlist) => {
             if (playlist != null && getSpotifyUser.data != undefined) {
-              addPlaylist.mutate({
-                playlistId: playlist.id,
-                userId: getSpotifyUser.data.id,
-                playlistName: playlist.name,
-              });
+              playlistIds.push(playlist.id);
+              playlistNames.push(playlist.name);
             }
           });
+          if (playlistIds.length != 0 && playlistNames.length != 0) {
+            addPlaylists.mutate({
+              userId: session!.user.id,
+              playlistIds: playlistIds,
+              playlistNames: playlistNames,
+            });
+          }
         })
         .catch((error) => {
           console.log(error);
@@ -47,15 +55,22 @@ export default function Recommend() {
         .getFeaturedPlaylists({ limit: 20, country: "HU" })
         .then((data) => {
           setRecommendedPlaylistsHU(data.body.playlists.items);
-          recommendedPlaylistsHU.forEach((playlist) => {
+          const playlistIds: string[] = [];
+          const playlistNames: string[] = [];
+
+          recommendedPlaylistsUS.forEach((playlist) => {
             if (playlist != null && getSpotifyUser.data != undefined) {
-              addPlaylist.mutate({
-                playlistId: playlist.id,
-                userId: getSpotifyUser.data.id,
-                playlistName: playlist.name,
-              });
+              playlistIds.push(playlist.id);
+              playlistNames.push(playlist.name);
             }
           });
+          if (playlistIds.length != 0 && playlistNames.length != 0) {
+            addPlaylists.mutate({
+              userId: session!.user.id,
+              playlistIds: playlistIds,
+              playlistNames: playlistNames,
+            });
+          }
         })
         .catch((error) => {
           console.log(error);
