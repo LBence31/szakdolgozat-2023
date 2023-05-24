@@ -22,9 +22,6 @@ export default function Sidebar() {
   const addPlaylists = api.playlist.addPlaylist.useMutation();
 
   useEffect(() => {
-    setTimeout(() => {
-      return;
-    }, 200);
     if (spotifyApi.getAccessToken()) {
       spotifyApi
         .getUserPlaylists({ limit: 50 })
