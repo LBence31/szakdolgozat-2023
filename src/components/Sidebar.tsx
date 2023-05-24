@@ -22,7 +22,7 @@ export default function Sidebar() {
   useEffect(() => {
     if (spotifyApi.getAccessToken()) {
       spotifyApi
-        .getUserPlaylists()
+        .getUserPlaylists({ limit: 50 })
         .then((data) => {
           setPlaylists(data.body.items);
           playlists.forEach((playlist) => {
