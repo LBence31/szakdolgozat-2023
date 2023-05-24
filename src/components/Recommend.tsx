@@ -41,7 +41,7 @@ export default function Recommend() {
           });
           if (playlistIds.length != 0 && playlistNames.length != 0) {
             addPlaylists.mutate({
-              userId: session!.user.id,
+              userId: getSpotifyUser.data!.id,
               playlistIds: playlistIds,
               playlistNames: playlistNames,
             });
@@ -66,7 +66,7 @@ export default function Recommend() {
           });
           if (playlistIds.length != 0 && playlistNames.length != 0) {
             addPlaylists.mutate({
-              userId: session!.user.id,
+              userId: getSpotifyUser.data!.id,
               playlistIds: playlistIds,
               playlistNames: playlistNames,
             });
