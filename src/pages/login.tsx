@@ -21,7 +21,7 @@ export default function Login({
         className="mb-5 w-52"
       />
 
-      {Object.values(providers).map((provider) => (
+      {Object.values(providers!).map((provider) => (
         <div key={provider.name}>
           <button
             className="rounded-full bg-[#18D860] p-5 text-white"
@@ -44,6 +44,6 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
   const providers = await getProviders();
 
   return {
-    props: { providers: providers ?? [] },
+    props: { providers: providers },
   };
 }
