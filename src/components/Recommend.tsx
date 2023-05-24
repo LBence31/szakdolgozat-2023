@@ -30,10 +30,10 @@ export default function Recommend() {
         .then((data) => {
           setRecommendedPlaylistsUS(data.body.playlists.items);
           recommendedPlaylistsUS.forEach((playlist) => {
-            if (playlist != null) {
+            if (playlist != null && getSpotifyUser.data != undefined) {
               addPlaylist.mutate({
                 playlistId: playlist.id,
-                userId: getSpotifyUser.data!.id,
+                userId: getSpotifyUser.data.id,
                 playlistName: playlist.name,
               });
             }
@@ -48,10 +48,10 @@ export default function Recommend() {
         .then((data) => {
           setRecommendedPlaylistsHU(data.body.playlists.items);
           recommendedPlaylistsHU.forEach((playlist) => {
-            if (playlist != null) {
+            if (playlist != null && getSpotifyUser.data != undefined) {
               addPlaylist.mutate({
                 playlistId: playlist.id,
-                userId: getSpotifyUser.data!.id,
+                userId: getSpotifyUser.data.id,
                 playlistName: playlist.name,
               });
             }
@@ -62,8 +62,6 @@ export default function Recommend() {
         });
     }
   }, [session, spotifyApi, getSpotifyUser.data]);
-
-  console.log(recommendedPlaylistsUS);
 
   return (
     <div className="hidden h-screen overflow-y-scroll border-l border-gray-900 p-5 pb-36 text-xs text-gray-500 scrollbar-hide sm:max-w-[12rem] md:inline-flex md:flex-col lg:max-w-[15rem] lg:text-sm">

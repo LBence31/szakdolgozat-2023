@@ -42,9 +42,11 @@ export default function Player() {
         spotifyApi
           .getMyCurrentPlaybackState()
           .then((data) => {
-            setCurrentTrackId(data.body.item!.id);
-            setIsPlaying(data.body?.is_playing);
-            setInfoBoxVisible(false);
+            if (data.body != null) {
+              setCurrentTrackId(data.body.item!.id);
+              setIsPlaying(data.body?.is_playing);
+              setInfoBoxVisible(false);
+            }
           })
           .catch((error) => {
             if (error.body.error.reason == "PREMIUM_REQUIRED") {
