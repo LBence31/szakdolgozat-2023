@@ -16,7 +16,7 @@ const Home: NextPage = () => {
     <div className="h-screen overflow-hidden bg-black">
       <Head>
         <title>Yfitops</title>
-        <link rel="icon" href="/favicon.ico" />
+        <link rel="icon" href="/logo.png" />
       </Head>
       <main className="flex">
         <Sidebar />
@@ -35,7 +35,7 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
   const session = await getServerSession(context.req, context.res, authOptions);
 
   if (!session) {
-    return { redirect: { destination: "/api/auth/signin" } };
+    return { redirect: { destination: "/login" } };
   }
 
   return {
