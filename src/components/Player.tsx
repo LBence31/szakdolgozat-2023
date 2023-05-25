@@ -12,6 +12,8 @@ import { currentTrackIdState } from "~/atoms/songAtom";
 import useSongInfo from "~/hooks/useSongInfo";
 import useSpotify from "~/hooks/useSpotify";
 import { premiumUserState } from "~/atoms/premiumAtom";
+import { TbRepeat, TbRepeatOff, TbRepeatOnce } from "react-icons/tb";
+import { MdShuffle, MdShuffleOn } from "react-icons/md";
 
 import {
   BackwardIcon,
@@ -36,6 +38,10 @@ export default function Player() {
   const [volume, setVolume] = useState<number>(50);
   const [isPremium, setIsPremium] = useRecoilState(premiumUserState);
   const [infoBoxVisible, setInfoBoxVisible] = useRecoilState(infoBoxUpState);
+  const [shuffleState, setShuffleState] = useState<boolean>(false);
+  const [repeatState, setRepeatState] = useState<"off" | "track" | "context">(
+    "off"
+  );
 
   const songInfo: any = useSongInfo();
 
@@ -50,6 +56,8 @@ export default function Player() {
               setCurrentTrackId(data.body.item!.id);
               setIsPlaying(data.body?.is_playing);
               setInfoBoxVisible(false);
+              setShuffleState(data.body?.shuffle_state);
+              setRepeatState(data.body?.repeat_state);
             }
           })
           .catch((error) => {
@@ -74,6 +82,52 @@ export default function Player() {
         }
       });
   };
+
+  const handleRepeat = () => {
+    if (repeatState == "off") {
+      setRepeatState("context");
+    } else if (repeatState == "context") {
+      setRepeatState("track");
+    } else {
+      setRepeatState("off");
+    }
+  };
+
+  const handleShuffle = () => {
+    if (shuffleState) {
+      setShuffleState(false);
+    } else {
+      setShuffleState(true);
+    }
+  };
+
+  useEffect(() => {
+    if (repeatState != undefined) {
+      spotifyApi.setRepeat(repeatState).catch((error) => {
+        if (error.body.error.reason == "PREMIUM_REQUIRED") {
+          setIsPremium(false);
+        } else if (error.body.error.reason == "NO_ACTIVE_DEVICE") {
+          setIsPremium(true);
+          setInfoBoxVisible(true);
+        } else {
+          console.log(error.body.error.reason);
+        }
+      });
+    }
+  }, [repeatState]);
+
+  useEffect(() => {
+    spotifyApi.setShuffle(shuffleState).catch((error) => {
+      if (error.body.error.reason == "PREMIUM_REQUIRED") {
+        setIsPremium(false);
+      } else if (error.body.error.reason == "NO_ACTIVE_DEVICE") {
+        setIsPremium(true);
+        setInfoBoxVisible(true);
+      } else {
+        console.log(error.body.error.reason);
+      }
+    });
+  }, [shuffleState]);
 
   const handlePlayPause = () => {
     spotifyApi
@@ -174,6 +228,11 @@ export default function Player() {
       </div>
 
       <div className="flex items-center justify-evenly">
+        {shuffleState ? (
+          <MdShuffleOn className="h-5 w-5" onClick={handleShuffle} />
+        ) : (
+          <MdShuffle className="h-5 w-5" onClick={handleShuffle} />
+        )}
         <BackwardIcon
           onClick={() => {
             spotifyApi
@@ -223,6 +282,13 @@ export default function Player() {
           }}
           className="button"
         />
+        {repeatState == "off" ? (
+          <TbRepeatOff className="h-5 w-5" onClick={handleRepeat} />
+        ) : repeatState == "track" ? (
+          <TbRepeatOnce className="h-5 w-5" onClick={handleRepeat} />
+        ) : (
+          <TbRepeat className="h-5 w-5" onClick={handleRepeat} />
+        )}
       </div>
 
       <div className="flex items-center justify-end space-x-3 md:space-x-4">
