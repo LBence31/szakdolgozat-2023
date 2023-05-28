@@ -229,9 +229,9 @@ export default function Player() {
 
       <div className="flex items-center justify-evenly">
         {shuffleState ? (
-          <MdShuffleOn className="h-5 w-5" onClick={handleShuffle} />
+          <MdShuffleOn className="button" onClick={handleShuffle} />
         ) : (
-          <MdShuffle className="h-5 w-5" onClick={handleShuffle} />
+          <MdShuffle className="button" onClick={handleShuffle} />
         )}
         <BackwardIcon
           onClick={() => {
@@ -283,11 +283,11 @@ export default function Player() {
           className="button"
         />
         {repeatState == "off" ? (
-          <TbRepeatOff className="h-5 w-5" onClick={handleRepeat} />
+          <TbRepeatOff className="button" onClick={handleRepeat} />
         ) : repeatState == "track" ? (
-          <TbRepeatOnce className="h-5 w-5" onClick={handleRepeat} />
+          <TbRepeatOnce className="button" onClick={handleRepeat} />
         ) : (
-          <TbRepeat className="h-5 w-5" onClick={handleRepeat} />
+          <TbRepeat className="button" onClick={handleRepeat} />
         )}
       </div>
 

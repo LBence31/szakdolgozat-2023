@@ -11,7 +11,19 @@ async function main() {
       email: "spotify@spotify.com",
     },
   });
-  console.log(spotifyUser);
+
+  const defaultPlaylist = await prisma.playlist.upsert({
+    where: {
+      id: "5msih5DfnVPNG34KySmM5j",
+    },
+    update: {},
+    create: {
+      id: "5msih5DfnVPNG34KySmM5j",
+      name: "Choke of the day",
+      userId: spotifyUser.id,
+    },
+  });
+  console.log(spotifyUser, defaultPlaylist);
 }
 main()
   .then(async () => {
