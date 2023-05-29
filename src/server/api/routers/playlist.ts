@@ -60,20 +60,14 @@ export const playlistRouter = createTRPCRouter({
     .query(({ ctx, input }) => {
       return ctx.prisma.playlist.findMany({
         where: {
-          OR: [
-            {
-              userId: {
-                not: input.userId,
-              },
+          userId: {
+            not: input.userId,
+          },
+          user: {
+            email: {
+              not: "spotify@spotify.com",
             },
-            {
-              user: {
-                email: {
-                  not: "spotify@spotify.com",
-                },
-              },
-            },
-          ],
+          },
         },
       });
     }),
