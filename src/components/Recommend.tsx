@@ -9,6 +9,7 @@ import { useEffect, useState } from "react";
 import { useRecoilState } from "recoil";
 import { playlistIdState } from "~/atoms/playlistAtom";
 import { api } from "~/utils/api";
+import { shuffle } from "lodash";
 
 export default function Recommend() {
   const spotifyApi = useSpotify();
@@ -19,9 +20,13 @@ export default function Recommend() {
   const [recommendedPlaylistsHU, setRecommendedPlaylistsHU] = useState<any[]>(
     []
   );
+  const [userPlaylists, setUserPlaylists] = useState<any[]>([]);
 
   const addPlaylists = api.playlist.addPlaylist.useMutation();
   const getSpotifyUser = api.user.getSpotifyUserID.useQuery();
+  const getOtherUsersPlaylist = api.playlist.getOtherUsersPlaylists.useQuery({
+    userId: session!.user.id,
+  });
 
   const [playlistId, setPlaylistId] = useRecoilState<any>(playlistIdState);
   useEffect(() => {
@@ -78,6 +83,17 @@ export default function Recommend() {
     }
   }, [session, spotifyApi, getSpotifyUser.data]);
 
+  useEffect(() => {
+    if (getOtherUsersPlaylist.data != undefined) {
+      const tempArr: any[] = [];
+      getOtherUsersPlaylist.data.map((data) => {
+        tempArr.push(data);
+      });
+      const shuffledArray = shuffle(tempArr);
+      setUserPlaylists(shuffledArray.slice(0, 6));
+    }
+  }, [getOtherUsersPlaylist.data]);
+
   return (
     <div className="hidden h-screen overflow-y-scroll border-l border-gray-900 p-5 pb-36 text-xs text-gray-500 scrollbar-hide sm:max-w-[12rem] md:inline-flex md:flex-col lg:max-w-[15rem] lg:text-sm">
       <div className="space-y-4">
@@ -99,6 +115,20 @@ export default function Recommend() {
         })}
 
         {recommendedPlaylistsHU.map((playlist) => {
+          if (playlist != null) {
+            return (
+              <p
+                key={playlist.id}
+                onClick={() => setPlaylistId(playlist.id)}
+                className="cursor-pointer hover:text-white"
+              >
+                {playlist.name}
+              </p>
+            );
+          }
+        })}
+
+        {userPlaylists.map((playlist) => {
           if (playlist != null) {
             return (
               <p

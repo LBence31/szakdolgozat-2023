@@ -50,4 +50,31 @@ export const playlistRouter = createTRPCRouter({
         },
       });
     }),
+
+  getOtherUsersPlaylists: protectedProcedure
+    .input(
+      z.object({
+        userId: z.string(),
+      })
+    )
+    .query(({ ctx, input }) => {
+      return ctx.prisma.playlist.findMany({
+        where: {
+          OR: [
+            {
+              userId: {
+                not: input.userId,
+              },
+            },
+            {
+              user: {
+                email: {
+                  not: "spotify@spotify.com",
+                },
+              },
+            },
+          ],
+        },
+      });
+    }),
 });
